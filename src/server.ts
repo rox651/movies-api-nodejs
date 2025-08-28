@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Router } from "express";
 import dotenv from "dotenv";
 import mediaRoutes from "./presentation/http/mediaRoutes";
 import directorRoutes from "./presentation/http/directorRoutes";
@@ -9,15 +9,21 @@ import typeRoutes from "./presentation/http/typeRoutes";
 dotenv.config();
 
 const app = express();
+const apiRouter = Router();
 
 app.use(express.json());
-app.use("/api/media", mediaRoutes);
-app.use("/api/directors", directorRoutes);
-app.use("/api/film-productions", filmProductionRoutes);
-app.use("/api/genres", genreRoutes);
-app.use("/api/types", typeRoutes);
 
-const PORT = process.env.PORT || 3000;
+// Mount all routes under /api
+apiRouter.use("/media", mediaRoutes);
+apiRouter.use("/directors", directorRoutes);
+apiRouter.use("/film-productions", filmProductionRoutes);
+apiRouter.use("/genres", genreRoutes);
+apiRouter.use("/types", typeRoutes);
+
+// Use the API router under /api prefix
+app.use("/api", apiRouter);
+
+const PORT = process.env.PORT ?? 3000;
 
 app.listen(PORT, () =>
 	console.log(`Server running on http://localhost:${PORT}`),
