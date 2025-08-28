@@ -13,14 +13,12 @@ const apiRouter = Router();
 
 app.use(express.json());
 
-// Mount all routes under /api
 apiRouter.use("/media", mediaRoutes);
 apiRouter.use("/directors", directorRoutes);
 apiRouter.use("/film-productions", filmProductionRoutes);
 apiRouter.use("/genres", genreRoutes);
 apiRouter.use("/types", typeRoutes);
 
-// Use the API router under /api prefix
 app.use("/api", apiRouter);
 
 const PORT = process.env.PORT ?? 3000;
