@@ -3,3 +3,4 @@ import type { typeTable } from "../../infrastructure/db/tables";
 
 export type Type = InferSelectModel<typeof typeTable>;
 export type NewType = InferInsertModel<typeof typeTable>;
+export type UpdateType = Partial<NewType>;

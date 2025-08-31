@@ -1,4 +1,8 @@
-import type { MediaDTO, MediaParamsDTO } from "../../domain/entities/media";
+import type {
+	MediaDTO,
+	MediaParamsDTO,
+	UpdateMediaDTO,
+} from "../../domain/entities/media";
 import type { IMediaRepository } from "../../domain/ports/IMediaRepository";
 import type {
 	CreateMediaDTO,
@@ -34,5 +38,12 @@ export class MediaService {
 	async addNewMedia(media: CreateMediaDTO): Promise<MediaDTO> {
 		const validatedMedia = parse(createMediaSchema, media);
 		return this.mediaRepository.addNewMedia(validatedMedia);
+	}
+
+	async updateMedia(
+		id: number,
+		media: UpdateMediaDTO,
+	): Promise<MediaDTO | null> {
+		return this.mediaRepository.updateMedia(id, media);
 	}
 }

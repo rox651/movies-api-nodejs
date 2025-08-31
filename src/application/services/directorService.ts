@@ -10,4 +10,11 @@ export class DirectorService {
 		const validatedDirector = parse(createDirectorSchema, director);
 		return this.directorRepository.addNewDirector(validatedDirector);
 	}
+
+	async updateDirector(
+		id: number,
+		director: Partial<NewDirector>,
+	): Promise<Director | null> {
+		return this.directorRepository.updateDirector(id, director);
+	}
 }

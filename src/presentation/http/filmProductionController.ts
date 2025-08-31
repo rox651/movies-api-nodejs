@@ -15,4 +15,28 @@ export const filmProductionController = {
 			});
 		}
 	},
+
+	updateFilmProduction: async (req: Request, res: Response) => {
+		try {
+			const { id } = req.params;
+			const filmProductionData = req.body;
+			console.log(`Updating film production ${id} with:`, filmProductionData);
+			const result = await filmProductionService.updateFilmProduction(
+				Number(id),
+				filmProductionData,
+			);
+
+			if (!result) {
+				res.status(404).json({ error: "Film production not found" });
+				return;
+			}
+
+			res.status(200).send(result);
+		} catch (error) {
+			console.error("Error in updateFilmProduction:", error);
+			res.status(500).json({
+				error: error instanceof Error ? error.message : String(error),
+			});
+		}
+	},
 };

@@ -1,4 +1,6 @@
-import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
+import { drizzle } from "drizzle-orm/node-postgres";
+import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import type { ExtractTablesWithRelations } from "drizzle-orm";
 import dotenv from "dotenv";
 import { Pool } from "pg";
 import { PgTransaction } from "drizzle-orm/pg-core";
@@ -19,7 +21,11 @@ const mockDb = drizzle.mock();
 
 export type Database = typeof db | typeof mockDb;
 export type DbOrTx =
-	| NodePgDatabase<typeof schema>
-	| PgTransaction<any, typeof schema>;
+	| Database
+	| PgTransaction<
+			NodePgQueryResultHKT,
+			Record<string, never>,
+			ExtractTablesWithRelations<Record<string, never>>
+	  >;
 
 export default db;

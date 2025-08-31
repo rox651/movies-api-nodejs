@@ -10,4 +10,11 @@ export class GenreService {
 		const validatedGenre = parse(createGenreSchema, genre);
 		return this.genreRepository.addNewGenre(validatedGenre);
 	}
+
+	async updateGenre(
+		id: number,
+		genre: Partial<NewGenre>,
+	): Promise<Genre | null> {
+		return this.genreRepository.updateGenre(id, genre);
+	}
 }

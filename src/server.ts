@@ -23,22 +23,6 @@ app.use("/api", apiRouter);
 
 const PORT = process.env.PORT ?? 3000;
 
-// Error handling middleware
-app.use(
-	(
-		err: any,
-		req: express.Request,
-		res: express.Response,
-		next: express.NextFunction,
-	) => {
-		console.error("Error details:", err);
-		res.status(500).json({
-			error: err.message,
-			stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
-		});
-	},
-);
-
 app.listen(PORT, () =>
 	console.log(`Server running on http://localhost:${PORT}`),
 );

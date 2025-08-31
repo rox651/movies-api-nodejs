@@ -1,6 +1,8 @@
+import { eq } from "drizzle-orm";
 import type {
 	FilmProduction,
 	NewFilmProduction,
+	UpdateFilmProduction,
 } from "../../domain/entities/filmProduction";
 import type { IFilmProductionRepository } from "../../domain/ports/IFilmProductionRepository";
 import type { Database } from "../db";
@@ -19,5 +21,20 @@ export class DrizzleFilmProductionRepository
 			.values(newFilmProduction)
 			.returning();
 		return result;
+	}
+
+	async updateFilmProduction(
+		id: number,
+		filmProductionData: UpdateFilmProduction,
+	): Promise<FilmProduction | null> {
+		const [result] = await this.db
+			.update(filmProduction)
+			.set({
+				...filmProductionData,
+				updatedAt: new Date(),
+			})
+			.where(eq(filmProduction.id, id))
+			.returning();
+		return result || null;
 	}
 }

@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "bun run src/server.ts",
 		"build": "tsc",
-		"start": "node dist/server.js",
+		"start": "bun dist/server.js",
 		"lint": "biome lint --write",
 		"format": "biome format --write",
 		"test": "jest",

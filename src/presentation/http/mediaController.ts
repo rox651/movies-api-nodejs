@@ -35,4 +35,26 @@ export const mediaController = {
 			});
 		}
 	},
+
+	updateMedia: async (req: Request, res: Response) => {
+		try {
+			const { id } = req.params;
+			const mediaData = req.body;
+			console.log(`Updating media ${id} with:`, mediaData);
+			const result = await mediaService.updateMedia(Number(id), mediaData);
+
+			if (!result) {
+				res.status(404).json({ error: "Media not found" });
+				return;
+			}
+
+			res.status(200).send(result);
+		} catch (error) {
+			console.error("Error updating media:", error);
+			res.status(500).json({
+				error: "Failed to update media",
+				details: error instanceof Error ? error.message : String(error),
+			});
+		}
+	},
 };

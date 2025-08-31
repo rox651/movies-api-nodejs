@@ -10,4 +10,8 @@ export class TypeService {
 		const validatedType = parse(createTypeSchema, type);
 		return this.typeRepository.addNewType(validatedType);
 	}
+
+	async updateType(id: number, type: Partial<NewType>): Promise<Type | null> {
+		return this.typeRepository.updateType(id, type);
+	}
 }

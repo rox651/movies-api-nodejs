@@ -3,3 +3,4 @@ import type { director } from "../../infrastructure/db/tables";
 
 export type Director = InferSelectModel<typeof director>;
 export type NewDirector = InferInsertModel<typeof director>;
+export type UpdateDirector = Partial<NewDirector>;

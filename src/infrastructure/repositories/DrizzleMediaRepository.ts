@@ -1,6 +1,10 @@
 import { eq, ilike, inArray, sql } from "drizzle-orm";
 
-import type { MediaDTO, MediaParamsDTO } from "../../domain/entities/media";
+import type {
+	MediaDTO,
+	MediaParamsDTO,
+	UpdateMediaDTO,
+} from "../../domain/entities/media";
 import type { IMediaRepository } from "../../domain/ports/IMediaRepository";
 import type { DbOrTx } from "../db";
 import type { CreateMediaDTO } from "../../presentation/dto/media";
@@ -147,6 +151,57 @@ export class DrizzleMediaRepository implements IMediaRepository {
 			}
 
 			return result[0];
+		});
+	}
+
+	async updateMedia(
+		id: number,
+		updateMediaDTO: UpdateMediaDTO,
+	): Promise<MediaDTO | null> {
+		const { genreIds, filmProductionIds, ...mediaData } = updateMediaDTO;
+
+		return await this.db.transaction(async (tx) => {
+			await tx
+				.update(media)
+				.set({
+					...mediaData,
+					updatedAt: new Date(),
+				})
+				.where(eq(media.id, id));
+
+			if (genreIds?.length && genreIds.length >= 0) {
+				await tx.delete(mediaGenre).where(eq(mediaGenre.mediaId, id));
+
+				if (genreIds.length > 0) {
+					await tx.insert(mediaGenre).values(
+						genreIds.map((genreId) => ({
+							mediaId: id,
+							genreId,
+						})),
+					);
+				}
+			}
+
+			if (filmProductionIds?.length && filmProductionIds.length >= 0) {
+				await tx
+					.delete(mediaFilmProduction)
+					.where(eq(mediaFilmProduction.mediaId, id));
+
+				if (filmProductionIds.length > 0) {
+					await tx.insert(mediaFilmProduction).values(
+						filmProductionIds.map((filmProductionId) => ({
+							mediaId: id,
+							filmProductionId,
+						})),
+					);
+				}
+			}
+
+			const result = await this.getMediaQuery(tx)
+				.where(eq(media.id, id))
+				.limit(1);
+
+			return result[0] || null;
 		});
 	}
 }
