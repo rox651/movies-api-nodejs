@@ -6,7 +6,7 @@ export const filmProduction = pgTable("film_production", {
 	name: text("name").notNull(),
 	slogan: varchar("slogan").notNull(),
 	description: varchar("description"),
-	state: stateEnum("state").notNull(),
-	createdAt: timestamp("created_at").notNull(),
-	updatedAt: timestamp("updated_at").notNull(),
+	state: stateEnum("state").default("active").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

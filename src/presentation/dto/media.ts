@@ -7,9 +7,11 @@ export interface MediaRequestParamsDTO
 	extends PaginationParamsDTO,
 		MediaParams {
 	genreIds?: "string";
+	filmProductionIds?: "string";
 }
 
 export interface CreateMediaDTO
 	extends Omit<NewMedia, "id" | "createdAt" | "updatedAt"> {
 	genreIds: number[];
+	filmProductionIds: number[];
 }

@@ -1,7 +1,7 @@
 import type { Type, NewType } from "../../domain/entities/type";
 import type { ITypeRepository } from "../../domain/ports/ITypeRepository";
 import type { Database } from "../db";
-import { typeTable } from "../db/tables";
+import { typeTable } from "../db/tables/typeTable";
 
 export class DrizzleTypeRepository implements ITypeRepository {
 	constructor(private db: Database) {}

@@ -10,11 +10,19 @@ import { createMediaSchema } from "../../domain/validation/mediaValidator";
 export class MediaService {
 	constructor(private mediaRepository: IMediaRepository) {}
 
+	private transformStringToArrayOfNumbers(text?: string): number[] | undefined {
+		return text?.split(",").map(Number);
+	}
+
 	async getAllMedia(params: MediaRequestParamsDTO): Promise<MediaDTO[]> {
-		const newGenresIds = params.genreIds?.split(",").map(Number);
+		const newGenresIds = this.transformStringToArrayOfNumbers(params.genreIds);
+		const newFilmProductionIds = this.transformStringToArrayOfNumbers(
+			params.filmProductionIds,
+		);
 		const newParams: MediaParamsDTO = {
 			...params,
 			genreIds: newGenresIds,
+			filmProductionIds: newFilmProductionIds,
 		};
 		return this.mediaRepository.getAllMedia(newParams);
 	}

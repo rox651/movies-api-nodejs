@@ -2,18 +2,23 @@ import { eq, ilike, inArray, sql } from "drizzle-orm";
 
 import type { MediaDTO, MediaParamsDTO } from "../../domain/entities/media";
 import type { IMediaRepository } from "../../domain/ports/IMediaRepository";
-import type { Database } from "../db";
+import type { DbOrTx } from "../db";
 import type { CreateMediaDTO } from "../../presentation/dto/media";
 
+import { genre } from "../db/tables/genre";
 import { media } from "../db/tables/media";
 import { MEDIA_LIMIT } from "../../domain/constants";
-import { director, genre, mediaGenre, typeTable } from "../db/tables";
+import { director } from "../db/tables/director";
+import { typeTable } from "../db/tables/typeTable";
+import { filmProduction } from "../db/tables/film_production";
+import { mediaGenre } from "../db/tables/media_genre";
+import { mediaFilmProduction } from "../db/tables/media_film_production";
 
 export class DrizzleMediaRepository implements IMediaRepository {
-	constructor(private db: Database) {}
+	constructor(private db: DbOrTx) {}
 
-	private getMediaQuery() {
-		return this.db
+	private getMediaQuery(connection: DbOrTx = this.db) {
+		return connection
 			.selectDistinct({
 				id: media.id,
 				title: media.title,
@@ -24,6 +29,8 @@ export class DrizzleMediaRepository implements IMediaRepository {
 				createdAt: media.createdAt,
 				updatedAt: media.updatedAt,
 				releaseDate: media.releaseDate,
+
+				filmProduction: sql<string>`COALESCE(${filmProduction.name})::text`,
 				type: sql<string>`COALESCE(${typeTable.name}, '')::text`,
 				genres: sql<string[]>`ARRAY_AGG(DISTINCT ${genre.name})::text[]`,
 				director: sql<string>`COALESCE((SELECT ${director.names} || ' ' || ${director.lastnames}))::text`,
@@ -33,6 +40,11 @@ export class DrizzleMediaRepository implements IMediaRepository {
 			.leftJoin(mediaGenre, eq(media.id, mediaGenre.mediaId))
 			.leftJoin(genre, eq(mediaGenre.genreId, genre.id))
 			.leftJoin(director, eq(media.directorId, director.id))
+			.leftJoin(mediaFilmProduction, eq(media.id, mediaFilmProduction.mediaId))
+			.leftJoin(
+				filmProduction,
+				eq(mediaFilmProduction.filmProductionId, filmProduction.id),
+			)
 			.groupBy(
 				media.id,
 				media.title,
@@ -46,6 +58,7 @@ export class DrizzleMediaRepository implements IMediaRepository {
 				typeTable.name,
 				director.names,
 				director.lastnames,
+				filmProduction.name,
 			)
 			.$dynamic();
 	}
@@ -94,12 +107,10 @@ export class DrizzleMediaRepository implements IMediaRepository {
 	}
 
 	async addNewMedia(createMediaDTO: CreateMediaDTO): Promise<MediaDTO> {
-		const { genreIds, ...mediaData } = createMediaDTO;
+		const { genreIds, filmProductionIds, ...mediaData } = createMediaDTO;
 		const now = new Date();
 
-		// Start a transaction to ensure all operations succeed or fail together
 		return await this.db.transaction(async (tx) => {
-			// Insert the media record
 			const [newMedia] = await tx
 				.insert(media)
 				.values({
@@ -109,7 +120,6 @@ export class DrizzleMediaRepository implements IMediaRepository {
 				})
 				.returning();
 
-			// Insert genre relationships
 			if (genreIds.length > 0) {
 				await tx.insert(mediaGenre).values(
 					genreIds.map((genreId) => ({
@@ -119,13 +129,24 @@ export class DrizzleMediaRepository implements IMediaRepository {
 				);
 			}
 
-			// Get the complete media with all relationships
-			const mediaWithRelations = await this.getMediaById(newMedia.id);
-			if (!mediaWithRelations) {
+			if (filmProductionIds.length > 0) {
+				await tx.insert(mediaFilmProduction).values(
+					filmProductionIds.map((filmProductionId) => ({
+						mediaId: newMedia.id,
+						filmProductionId,
+					})),
+				);
+			}
+
+			const result = await this.getMediaQuery(tx)
+				.where(eq(media.id, newMedia.id))
+				.limit(1);
+
+			if (!result[0]) {
 				throw new Error("Failed to create media");
 			}
 
-			return mediaWithRelations;
+			return result[0];
 		});
 	}
 }

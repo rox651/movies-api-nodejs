@@ -1,7 +1,7 @@
 import type { Director, NewDirector } from "../../domain/entities/director";
 import type { IDirectorRepository } from "../../domain/ports/IDirectorRepository";
 import type { Database } from "../db";
-import { director } from "../db/tables";
+import { director } from "../db/tables/director";
 
 export class DrizzleDirectorRepository implements IDirectorRepository {
 	constructor(private db: Database) {}

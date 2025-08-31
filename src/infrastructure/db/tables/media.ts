@@ -9,10 +9,10 @@ export const media = pgTable("media", {
 	synopsis: text("synopsis"),
 	url: text("url").notNull().unique(),
 	image: text("image"),
-	state: stateEnum("state").notNull(),
-	createdAt: timestamp("created_at").notNull(),
-	updatedAt: timestamp("updated_at").notNull(),
-	releaseDate: date("release_date").notNull(),
+	state: stateEnum("state").default("active").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	releaseDate: date("release_date").defaultNow().notNull(),
 	directorId: serial("director_id")
 		.notNull()
 		.references(() => director.id),

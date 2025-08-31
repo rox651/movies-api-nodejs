@@ -5,7 +5,7 @@ export const director = pgTable("director", {
 	id: serial("id").primaryKey(),
 	names: text("names").notNull(),
 	lastnames: text("lastnames"),
-	state: stateEnum("state").notNull(),
-	createdAt: timestamp("created_at").notNull(),
-	updatedAt: timestamp("updated_at").notNull(),
+	state: stateEnum("state").default("active").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

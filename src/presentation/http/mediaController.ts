@@ -22,8 +22,17 @@ export const mediaController = {
 	},
 
 	addNewMedia: async (req: Request, res: Response) => {
-		const newMedia: CreateMediaDTO = req.body;
-		const result = await mediaService.addNewMedia(newMedia);
-		res.status(201).send(result);
+		try {
+			const newMedia: CreateMediaDTO = req.body;
+			console.log("Received media data:", newMedia);
+			const result = await mediaService.addNewMedia(newMedia);
+			res.status(201).send(result);
+		} catch (error) {
+			console.error("Error creating media:", error);
+			res.status(500).json({
+				error: "Failed to create media",
+				details: error instanceof Error ? error.message : String(error),
+			});
+		}
 	},
 };
