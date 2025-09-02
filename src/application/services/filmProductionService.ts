@@ -25,7 +25,6 @@ export class FilmProductionService {
 		id: number,
 		filmProduction: Partial<NewFilmProduction>,
 	): Promise<FilmProduction | null> {
-		// No necesitamos validar el id aquí ya que no es parte de los datos a actualizar
 		return this.filmProductionRepository.updateFilmProduction(
 			id,
 			filmProduction,

@@ -1,15 +1,15 @@
 {
 	"compilerOptions": {
-		"target": "es2020",
-		"module": "es2020",
+		"target": "ES2020",
+		"module": "CommonJS",
+		"moduleResolution": "Node",
 		"outDir": "./dist",
 		"rootDir": "./src",
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-		"sourceMap": true,
-		"moduleResolution": "node"
+		"sourceMap": true
 	},
 	"include": ["src/**/*.ts"],
 	"exclude": ["node_modules", "dist"]
