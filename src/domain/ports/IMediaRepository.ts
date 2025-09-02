@@ -2,7 +2,7 @@ import type {
 	MediaDTO,
 	MediaParamsDTO,
 	UpdateMediaDTO,
-} from "../entities/media";
+} from "../entities/Media";
 import type { CreateMediaDTO } from "../../presentation/dto/media";
 
 export interface IMediaRepository {

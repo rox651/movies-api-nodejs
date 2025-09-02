@@ -4,7 +4,7 @@ import type {
 	MediaDTO,
 	MediaParamsDTO,
 	UpdateMediaDTO,
-} from "../../domain/entities/media";
+} from "../../domain/entities/Media";
 import type { IMediaRepository } from "../../domain/ports/IMediaRepository";
 import type { DbOrTx } from "../db";
 import type { CreateMediaDTO } from "../../presentation/dto/media";
@@ -128,7 +128,6 @@ export class DrizzleMediaRepository implements IMediaRepository {
 					typeId: mediaData.typeId,
 					createdAt: now,
 					updatedAt: now,
-					// let DB default handle releaseDate if not provided
 					...(mediaData.releaseDate
 						? { releaseDate: mediaData.releaseDate }
 						: {}),

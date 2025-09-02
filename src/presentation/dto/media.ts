@@ -1,4 +1,4 @@
-import type { Media, NewMedia } from "../../domain/entities/media";
+import type { Media, NewMedia } from "../../domain/entities/Media";
 import type { PaginationParamsDTO } from "./pagination";
 
 type MediaParams = Partial<Pick<Media, "title" | "releaseDate" | "typeId">>;
