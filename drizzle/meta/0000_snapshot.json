@@ -1,429 +1,473 @@
 {
-	"id": "e999dc79-f978-4479-87a0-621d02750177",
-	"prevId": "00000000-0000-0000-0000-000000000000",
-	"version": "7",
-	"dialect": "postgresql",
-	"tables": {
-		"public.director": {
-			"name": "director",
-			"schema": "",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "serial",
-					"primaryKey": true,
-					"notNull": true
-				},
-				"names": {
-					"name": "names",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"lastnames": {
-					"name": "lastnames",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false
-				},
-				"state": {
-					"name": "state",
-					"type": "state",
-					"typeSchema": "public",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"created_at": {
-					"name": "created_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"updated_at": {
-					"name": "updated_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": true
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"policies": {},
-			"checkConstraints": {},
-			"isRLSEnabled": false
-		},
-		"public.film_production": {
-			"name": "film_production",
-			"schema": "",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "serial",
-					"primaryKey": true,
-					"notNull": true
-				},
-				"name": {
-					"name": "name",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"slogan": {
-					"name": "slogan",
-					"type": "varchar",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"description": {
-					"name": "description",
-					"type": "varchar",
-					"primaryKey": false,
-					"notNull": false
-				},
-				"state": {
-					"name": "state",
-					"type": "state",
-					"typeSchema": "public",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"created_at": {
-					"name": "created_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"updated_at": {
-					"name": "updated_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": true
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"policies": {},
-			"checkConstraints": {},
-			"isRLSEnabled": false
-		},
-		"public.genre": {
-			"name": "genre",
-			"schema": "",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "serial",
-					"primaryKey": true,
-					"notNull": true
-				},
-				"name": {
-					"name": "name",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"state": {
-					"name": "state",
-					"type": "state",
-					"typeSchema": "public",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"description": {
-					"name": "description",
-					"type": "varchar",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"created_at": {
-					"name": "created_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"updated_at": {
-					"name": "updated_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": true
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"policies": {},
-			"checkConstraints": {},
-			"isRLSEnabled": false
-		},
-		"public.media": {
-			"name": "media",
-			"schema": "",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "serial",
-					"primaryKey": true,
-					"notNull": true
-				},
-				"title": {
-					"name": "title",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"synopsis": {
-					"name": "synopsis",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false
-				},
-				"url": {
-					"name": "url",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"image": {
-					"name": "image",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false
-				},
-				"state": {
-					"name": "state",
-					"type": "state",
-					"typeSchema": "public",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"created_at": {
-					"name": "created_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"updated_at": {
-					"name": "updated_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"release_date": {
-					"name": "release_date",
-					"type": "date",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"director_id": {
-					"name": "director_id",
-					"type": "serial",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"type_id": {
-					"name": "type_id",
-					"type": "serial",
-					"primaryKey": false,
-					"notNull": true
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {
-				"media_director_id_director_id_fk": {
-					"name": "media_director_id_director_id_fk",
-					"tableFrom": "media",
-					"tableTo": "director",
-					"columnsFrom": ["director_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				},
-				"media_type_id_type_id_fk": {
-					"name": "media_type_id_type_id_fk",
-					"tableFrom": "media",
-					"tableTo": "type",
-					"columnsFrom": ["type_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {
-				"media_url_unique": {
-					"name": "media_url_unique",
-					"nullsNotDistinct": false,
-					"columns": ["url"]
-				}
-			},
-			"policies": {},
-			"checkConstraints": {},
-			"isRLSEnabled": false
-		},
-		"public.media_film_production": {
-			"name": "media_film_production",
-			"schema": "",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "serial",
-					"primaryKey": true,
-					"notNull": true
-				},
-				"film_production_id": {
-					"name": "film_production_id",
-					"type": "serial",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"media_id": {
-					"name": "media_id",
-					"type": "serial",
-					"primaryKey": false,
-					"notNull": true
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {
-				"media_film_production_film_production_id_film_production_id_fk": {
-					"name": "media_film_production_film_production_id_film_production_id_fk",
-					"tableFrom": "media_film_production",
-					"tableTo": "film_production",
-					"columnsFrom": ["film_production_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				},
-				"media_film_production_media_id_media_id_fk": {
-					"name": "media_film_production_media_id_media_id_fk",
-					"tableFrom": "media_film_production",
-					"tableTo": "media",
-					"columnsFrom": ["media_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"policies": {},
-			"checkConstraints": {},
-			"isRLSEnabled": false
-		},
-		"public.media_genre": {
-			"name": "media_genre",
-			"schema": "",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "serial",
-					"primaryKey": true,
-					"notNull": true
-				},
-				"media_id": {
-					"name": "media_id",
-					"type": "serial",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"genre_id": {
-					"name": "genre_id",
-					"type": "serial",
-					"primaryKey": false,
-					"notNull": true
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {
-				"media_genre_media_id_media_id_fk": {
-					"name": "media_genre_media_id_media_id_fk",
-					"tableFrom": "media_genre",
-					"tableTo": "media",
-					"columnsFrom": ["media_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				},
-				"media_genre_genre_id_genre_id_fk": {
-					"name": "media_genre_genre_id_genre_id_fk",
-					"tableFrom": "media_genre",
-					"tableTo": "genre",
-					"columnsFrom": ["genre_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"policies": {},
-			"checkConstraints": {},
-			"isRLSEnabled": false
-		},
-		"public.type": {
-			"name": "type",
-			"schema": "",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "serial",
-					"primaryKey": true,
-					"notNull": true
-				},
-				"name": {
-					"name": "name",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"description": {
-					"name": "description",
-					"type": "varchar",
-					"primaryKey": false,
-					"notNull": false
-				},
-				"created_at": {
-					"name": "created_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"updated_at": {
-					"name": "updated_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": true
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"policies": {},
-			"checkConstraints": {},
-			"isRLSEnabled": false
-		}
-	},
-	"enums": {
-		"public.state": {
-			"name": "state",
-			"schema": "public",
-			"values": ["active", "inactive"]
-		}
-	},
-	"schemas": {},
-	"sequences": {},
-	"roles": {},
-	"policies": {},
-	"views": {},
-	"_meta": {
-		"columns": {},
-		"schemas": {},
-		"tables": {}
-	}
+  "id": "55bda2ba-d3b3-4af3-88e0-583036d743af",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.director": {
+      "name": "director",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "names": {
+          "name": "names",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastnames": {
+          "name": "lastnames",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state": {
+          "name": "state",
+          "type": "state",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.film_production": {
+      "name": "film_production",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slogan": {
+          "name": "slogan",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state": {
+          "name": "state",
+          "type": "state",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.genre": {
+      "name": "genre",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "state": {
+          "name": "state",
+          "type": "state",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.media": {
+      "name": "media",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "synopsis": {
+          "name": "synopsis",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state": {
+          "name": "state",
+          "type": "state",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "release_date": {
+          "name": "release_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "director_id": {
+          "name": "director_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type_id": {
+          "name": "type_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "media_director_id_director_id_fk": {
+          "name": "media_director_id_director_id_fk",
+          "tableFrom": "media",
+          "tableTo": "director",
+          "columnsFrom": [
+            "director_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "media_type_id_type_id_fk": {
+          "name": "media_type_id_type_id_fk",
+          "tableFrom": "media",
+          "tableTo": "type",
+          "columnsFrom": [
+            "type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "media_url_unique": {
+          "name": "media_url_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "url"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.media_film_production": {
+      "name": "media_film_production",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "film_production_id": {
+          "name": "film_production_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "media_id": {
+          "name": "media_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "media_film_production_film_production_id_film_production_id_fk": {
+          "name": "media_film_production_film_production_id_film_production_id_fk",
+          "tableFrom": "media_film_production",
+          "tableTo": "film_production",
+          "columnsFrom": [
+            "film_production_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "media_film_production_media_id_media_id_fk": {
+          "name": "media_film_production_media_id_media_id_fk",
+          "tableFrom": "media_film_production",
+          "tableTo": "media",
+          "columnsFrom": [
+            "media_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.media_genre": {
+      "name": "media_genre",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "media_id": {
+          "name": "media_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "genre_id": {
+          "name": "genre_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "media_genre_media_id_media_id_fk": {
+          "name": "media_genre_media_id_media_id_fk",
+          "tableFrom": "media_genre",
+          "tableTo": "media",
+          "columnsFrom": [
+            "media_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "media_genre_genre_id_genre_id_fk": {
+          "name": "media_genre_genre_id_genre_id_fk",
+          "tableFrom": "media_genre",
+          "tableTo": "genre",
+          "columnsFrom": [
+            "genre_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.type": {
+      "name": "type",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.state": {
+      "name": "state",
+      "schema": "public",
+      "values": [
+        "active",
+        "inactive"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
 }

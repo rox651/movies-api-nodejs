@@ -1,10 +1,6 @@
 import { eq, ilike, inArray, sql } from "drizzle-orm";
 
-import type {
-	MediaDTO,
-	MediaParamsDTO,
-	UpdateMediaDTO,
-} from "../../domain/entities/media";
+import type { MediaDTO, MediaParamsDTO, UpdateMediaDTO } from "../../domain/entities/media";
 import type { IMediaRepository } from "../../domain/ports/IMediaRepository";
 import type { DbOrTx } from "../db";
 import type { CreateMediaDTO } from "../../presentation/dto/media";
@@ -19,189 +15,162 @@ import { mediaGenre } from "../db/tables/media_genre";
 import { mediaFilmProduction } from "../db/tables/media_film_production";
 
 export class DrizzleMediaRepository implements IMediaRepository {
-	constructor(private db: DbOrTx) {}
+   constructor(private db: DbOrTx) {}
 
-	private getMediaQuery(connection: DbOrTx = this.db) {
-		return connection
-			.selectDistinct({
-				id: media.id,
-				title: media.title,
-				synopsis: media.synopsis,
-				url: media.url,
-				image: media.image,
-				state: media.state,
-				createdAt: media.createdAt,
-				updatedAt: media.updatedAt,
-				releaseDate: media.releaseDate,
+   private getMediaQuery(connection: DbOrTx = this.db) {
+      return connection
+         .selectDistinct({
+            id: media.id,
+            title: media.title,
+            synopsis: media.synopsis,
+            url: media.url,
+            image: media.image,
+            state: media.state,
+            createdAt: media.createdAt,
+            updatedAt: media.updatedAt,
+            releaseDate: media.releaseDate,
+            filmProductionName: sql<string>`COALESCE(${filmProduction.name}, '')`.as(
+               "filmProductionName"
+            ),
+            type: sql<string>`COALESCE(${typeTable.name}, '')`.as("type"),
+            genres: sql<
+               string[]
+            >`COALESCE(ARRAY_AGG(DISTINCT ${genre.name}) FILTER (WHERE ${genre.name} IS NOT NULL), ARRAY[]::text[])`.as(
+               "genres"
+            ),
+            director:
+               sql<string>`COALESCE(${director.names} || ' ' || ${director.lastnames}, '')`.as(
+                  "director"
+               ),
+         })
+         .from(media)
+         .leftJoin(typeTable, eq(typeTable.id, media.typeId))
+         .leftJoin(mediaGenre, eq(media.id, mediaGenre.mediaId))
+         .leftJoin(genre, eq(mediaGenre.genreId, genre.id))
+         .leftJoin(director, eq(media.directorId, director.id))
+         .leftJoin(mediaFilmProduction, eq(media.id, mediaFilmProduction.mediaId))
+         .leftJoin(filmProduction, eq(mediaFilmProduction.filmProductionId, filmProduction.id))
+         .groupBy(media.id, filmProduction.name, typeTable.name, director.names, director.lastnames)
+         .$dynamic();
+   }
 
-				filmProduction: sql<string>`COALESCE(${filmProduction.name})::text`,
-				type: sql<string>`COALESCE(${typeTable.name}, '')::text`,
-				genres: sql<string[]>`ARRAY_AGG(DISTINCT ${genre.name})::text[]`,
-				director: sql<string>`COALESCE((SELECT ${director.names} || ' ' || ${director.lastnames}))::text`,
-			})
-			.from(media)
-			.leftJoin(typeTable, eq(typeTable.id, media.typeId))
-			.leftJoin(mediaGenre, eq(media.id, mediaGenre.mediaId))
-			.leftJoin(genre, eq(mediaGenre.genreId, genre.id))
-			.leftJoin(director, eq(media.directorId, director.id))
-			.leftJoin(mediaFilmProduction, eq(media.id, mediaFilmProduction.mediaId))
-			.leftJoin(
-				filmProduction,
-				eq(mediaFilmProduction.filmProductionId, filmProduction.id),
-			)
-			.groupBy(
-				media.id,
-				media.title,
-				media.synopsis,
-				media.url,
-				media.image,
-				media.state,
-				media.createdAt,
-				media.updatedAt,
-				media.releaseDate,
-				typeTable.name,
-				director.names,
-				director.lastnames,
-				filmProduction.name,
-			)
-			.$dynamic();
-	}
+   async getAllMedia(params: MediaParamsDTO): Promise<MediaDTO[]> {
+      const { title, releaseDate, typeId, genreIds, limit = MEDIA_LIMIT, offset = 0 } = params;
 
-	async getAllMedia(params: MediaParamsDTO): Promise<MediaDTO[]> {
-		const {
-			title,
-			releaseDate,
-			typeId,
-			genreIds,
-			limit = MEDIA_LIMIT,
-			offset = 0,
-		} = params;
+      let query = this.getMediaQuery();
 
-		let query = this.getMediaQuery();
+      if (title) {
+         query = query.where(ilike(media.title, `%${title}%`));
+      }
 
-		if (title) {
-			query = query.where(ilike(media.title, `%${title}%`));
-		}
+      if (releaseDate) {
+         query = query.where(eq(sql`EXTRACT(YEAR FROM ${media.releaseDate})`, releaseDate));
+      }
 
-		if (releaseDate) {
-			query = query.where(
-				eq(sql`EXTRACT(YEAR FROM ${media.releaseDate})`, releaseDate),
-			);
-		}
+      if (typeId) {
+         query = query.where(eq(media.typeId, typeId));
+      }
 
-		if (typeId) {
-			query = query.where(eq(media.typeId, typeId));
-		}
+      if (genreIds) {
+         query = query.where(inArray(mediaGenre.genreId, genreIds));
+      }
 
-		if (genreIds) {
-			query = query.where(inArray(mediaGenre.genreId, genreIds));
-		}
+      const results = await query.limit(limit).offset(offset);
 
-		const results = await query.limit(limit).offset(offset);
+      return results;
+   }
 
-		return results;
-	}
+   async getMediaById(id: number): Promise<MediaDTO | null> {
+      const query = this.getMediaQuery();
 
-	async getMediaById(id: number): Promise<MediaDTO | null> {
-		const query = this.getMediaQuery();
+      const result = await query.where(eq(media.id, id)).limit(1);
 
-		const result = await query.where(eq(media.id, id)).limit(1);
+      return result[0];
+   }
 
-		return result[0];
-	}
+   async addNewMedia(createMediaDTO: CreateMediaDTO): Promise<MediaDTO> {
+      const { genreIds, filmProductionIds, ...mediaData } = createMediaDTO;
+      const now = new Date();
 
-	async addNewMedia(createMediaDTO: CreateMediaDTO): Promise<MediaDTO> {
-		const { genreIds, filmProductionIds, ...mediaData } = createMediaDTO;
-		const now = new Date();
+      return await this.db.transaction(async tx => {
+         const [newMedia] = await tx
+            .insert(media)
+            .values({
+               ...mediaData,
+               createdAt: now,
+               updatedAt: now,
+            })
+            .returning();
 
-		return await this.db.transaction(async (tx) => {
-			const [newMedia] = await tx
-				.insert(media)
-				.values({
-					...mediaData,
-					createdAt: now,
-					updatedAt: now,
-				})
-				.returning();
+         if (genreIds.length > 0) {
+            await tx.insert(mediaGenre).values(
+               genreIds.map(genreId => ({
+                  mediaId: newMedia.id,
+                  genreId,
+               }))
+            );
+         }
 
-			if (genreIds.length > 0) {
-				await tx.insert(mediaGenre).values(
-					genreIds.map((genreId) => ({
-						mediaId: newMedia.id,
-						genreId,
-					})),
-				);
-			}
+         if (filmProductionIds.length > 0) {
+            await tx.insert(mediaFilmProduction).values(
+               filmProductionIds.map(filmProductionId => ({
+                  mediaId: newMedia.id,
+                  filmProductionId,
+               }))
+            );
+         }
 
-			if (filmProductionIds.length > 0) {
-				await tx.insert(mediaFilmProduction).values(
-					filmProductionIds.map((filmProductionId) => ({
-						mediaId: newMedia.id,
-						filmProductionId,
-					})),
-				);
-			}
+         const result = await this.getMediaQuery(tx).where(eq(media.id, newMedia.id)).limit(1);
 
-			const result = await this.getMediaQuery(tx)
-				.where(eq(media.id, newMedia.id))
-				.limit(1);
+         if (!result[0]) {
+            throw new Error("Failed to create media");
+         }
 
-			if (!result[0]) {
-				throw new Error("Failed to create media");
-			}
+         return result[0];
+      });
+   }
 
-			return result[0];
-		});
-	}
+   async updateMedia(id: number, updateMediaDTO: UpdateMediaDTO): Promise<MediaDTO | null> {
+      const { genreIds, filmProductionIds, ...mediaData } = updateMediaDTO;
 
-	async updateMedia(
-		id: number,
-		updateMediaDTO: UpdateMediaDTO,
-	): Promise<MediaDTO | null> {
-		const { genreIds, filmProductionIds, ...mediaData } = updateMediaDTO;
+      return await this.db.transaction(async tx => {
+         await tx
+            .update(media)
+            .set({
+               ...mediaData,
+               updatedAt: new Date(),
+            })
+            .where(eq(media.id, id));
 
-		return await this.db.transaction(async (tx) => {
-			await tx
-				.update(media)
-				.set({
-					...mediaData,
-					updatedAt: new Date(),
-				})
-				.where(eq(media.id, id));
+         if (genreIds?.length && genreIds.length >= 0) {
+            await tx.delete(mediaGenre).where(eq(mediaGenre.mediaId, id));
 
-			if (genreIds?.length && genreIds.length >= 0) {
-				await tx.delete(mediaGenre).where(eq(mediaGenre.mediaId, id));
+            if (genreIds.length > 0) {
+               await tx.insert(mediaGenre).values(
+                  genreIds.map(genreId => ({
+                     mediaId: id,
+                     genreId,
+                  }))
+               );
+            }
+         }
 
-				if (genreIds.length > 0) {
-					await tx.insert(mediaGenre).values(
-						genreIds.map((genreId) => ({
-							mediaId: id,
-							genreId,
-						})),
-					);
-				}
-			}
+         if (filmProductionIds?.length && filmProductionIds.length >= 0) {
+            await tx.delete(mediaFilmProduction).where(eq(mediaFilmProduction.mediaId, id));
 
-			if (filmProductionIds?.length && filmProductionIds.length >= 0) {
-				await tx
-					.delete(mediaFilmProduction)
-					.where(eq(mediaFilmProduction.mediaId, id));
+            if (filmProductionIds.length > 0) {
+               await tx.insert(mediaFilmProduction).values(
+                  filmProductionIds.map(filmProductionId => ({
+                     mediaId: id,
+                     filmProductionId,
+                  }))
+               );
+            }
+         }
 
-				if (filmProductionIds.length > 0) {
-					await tx.insert(mediaFilmProduction).values(
-						filmProductionIds.map((filmProductionId) => ({
-							mediaId: id,
-							filmProductionId,
-						})),
-					);
-				}
-			}
+         const result = await this.getMediaQuery(tx).where(eq(media.id, id)).limit(1);
 
-			const result = await this.getMediaQuery(tx)
-				.where(eq(media.id, id))
-				.limit(1);
-
-			return result[0] || null;
-		});
-	}
+         return result[0] || null;
+      });
+   }
 }

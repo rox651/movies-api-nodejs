@@ -3,9 +3,9 @@ CREATE TABLE "director" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"names" text NOT NULL,
 	"lastnames" text,
-	"state" "state" NOT NULL,
-	"created_at" timestamp NOT NULL,
-	"updated_at" timestamp NOT NULL
+	"state" "state" DEFAULT 'active' NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "film_production" (
@@ -13,18 +13,18 @@ CREATE TABLE "film_production" (
 	"name" text NOT NULL,
 	"slogan" varchar NOT NULL,
 	"description" varchar,
-	"state" "state" NOT NULL,
-	"created_at" timestamp NOT NULL,
-	"updated_at" timestamp NOT NULL
+	"state" "state" DEFAULT 'active' NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "genre" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"state" "state" NOT NULL,
+	"state" "state" DEFAULT 'active' NOT NULL,
 	"description" varchar NOT NULL,
-	"created_at" timestamp NOT NULL,
-	"updated_at" timestamp NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "media" (
@@ -33,10 +33,10 @@ CREATE TABLE "media" (
 	"synopsis" text,
 	"url" text NOT NULL,
 	"image" text,
-	"state" "state" NOT NULL,
-	"created_at" timestamp NOT NULL,
-	"updated_at" timestamp NOT NULL,
-	"release_date" date NOT NULL,
+	"state" "state" DEFAULT 'active' NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"release_date" date DEFAULT now() NOT NULL,
 	"director_id" serial NOT NULL,
 	"type_id" serial NOT NULL,
 	CONSTRAINT "media_url_unique" UNIQUE("url")
@@ -58,8 +58,8 @@ CREATE TABLE "type" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"description" varchar,
-	"created_at" timestamp NOT NULL,
-	"updated_at" timestamp NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "media" ADD CONSTRAINT "media_director_id_director_id_fk" FOREIGN KEY ("director_id") REFERENCES "public"."director"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
