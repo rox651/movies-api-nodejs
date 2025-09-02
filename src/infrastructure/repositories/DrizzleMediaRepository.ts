@@ -6,7 +6,7 @@ import type {
 	UpdateMediaDTO,
 } from "../../domain/entities/media";
 import type { IMediaRepository } from "../../domain/ports/IMediaRepository";
-import type { DbOrTx } from "../db/index";
+import type { DbOrTx } from "../db";
 import type { CreateMediaDTO } from "../../presentation/dto/media";
 
 import { genre } from "../db/tables/genre";
@@ -119,9 +119,19 @@ export class DrizzleMediaRepository implements IMediaRepository {
 			const [newMedia] = await tx
 				.insert(media)
 				.values({
-					...mediaData,
+					title: mediaData.title,
+					synopsis: mediaData.synopsis,
+					url: mediaData.url,
+					image: mediaData.image,
+					state: mediaData.state ?? "active",
+					directorId: mediaData.directorId,
+					typeId: mediaData.typeId,
 					createdAt: now,
 					updatedAt: now,
+					// let DB default handle releaseDate if not provided
+					...(mediaData.releaseDate
+						? { releaseDate: mediaData.releaseDate }
+						: {}),
 				})
 				.returning();
 

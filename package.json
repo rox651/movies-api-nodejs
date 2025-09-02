@@ -1,11 +1,11 @@
 {
 	"name": "nodejs-movies-api",
 	"module": "index.ts",
-	"type": "module",
+	"type": "commonjs",
 	"scripts": {
 		"dev": "bun run src/server.ts",
 		"build": "tsc",
-		"start": "bun dist/server.js",
+		"start": "node dist/server.js",
 		"lint": "biome lint --write",
 		"format": "biome format --write",
 		"test": "jest",
