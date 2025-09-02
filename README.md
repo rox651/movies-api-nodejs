@@ -157,13 +157,13 @@ The project uses Drizzle ORM for database operations and migrations.
 -  Create a new migration:§
 
 ```bash
-bun run drizzle-kit generate:pg
+bun run drizzle-kit generate
 ```
 
 -  Push migrations to database:
 
 ```bash
-bun run drizzle-kit push:pg
+bun run drizzle-kit push
 ```
 
 ## Contributing
