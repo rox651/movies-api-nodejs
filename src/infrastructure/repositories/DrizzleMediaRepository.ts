@@ -4,10 +4,10 @@ import type {
 	MediaDTO,
 	MediaParamsDTO,
 	UpdateMediaDTO,
-} from "../../domain/entities/media.js";
-import type { IMediaRepository } from "../../domain/ports/IMediaRepository.js";
-import type { DbOrTx } from "../db/index.js";
-import type { CreateMediaDTO } from "../../presentation/dto/media.js";
+} from "../../domain/entities/media";
+import type { IMediaRepository } from "../../domain/ports/IMediaRepository";
+import type { DbOrTx } from "../db/index";
+import type { CreateMediaDTO } from "../../presentation/dto/media";
 
 import { genre } from "../db/tables/genre";
 import { media } from "../db/tables/media";
