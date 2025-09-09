@@ -5,6 +5,9 @@ import directorRoutes from "./presentation/http/directorRoutes";
 import filmProductionRoutes from "./presentation/http/filmProductionRoutes";
 import genreRoutes from "./presentation/http/genreRoutes";
 import typeRoutes from "./presentation/http/typeRoutes";
+import * as trpcExpress from "@trpc/server/adapters/express";
+import { appRouter } from "./presentation/trpc/routers/_app";
+import { createContext } from "./presentation/trpc/context";
 
 dotenv.config();
 
@@ -21,8 +24,14 @@ apiRouter.use("/types", typeRoutes);
 
 app.use("/api", apiRouter);
 
+app.use(
+   "/trpc",
+   trpcExpress.createExpressMiddleware({
+      router: appRouter,
+      createContext,
+   })
+);
+
 const PORT = process.env.PORT ?? 3000;
 
-app.listen(PORT, () =>
-	console.log(`Server running on http://localhost:${PORT}`),
-);
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
